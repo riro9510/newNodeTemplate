@@ -31,7 +31,15 @@ npm install
 # Step 4 – Create .env if it doesn't exist
 if [ ! -f .env ]; then
   echo -e "${GREEN}🔐 Creating default .env file...${NC}"
-  cp .env.example .env
+newValue=$(openssl rand -base64 32)
+# Create the .env file
+touch .env
+
+# Adding content
+echo "PORT=3000" > .env
+echo "DATABASE_URL=your_db_url_here" >> .env
+echo "JWT_SECRET=$newValue" >> .env
+
 else
   echo -e "${GREEN}✅ .env file already exists.${NC}"
 fi
