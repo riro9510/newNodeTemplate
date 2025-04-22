@@ -42,7 +42,7 @@ fi
 
 # Create project structure
 echo "📂 Creating base structure..."
-node scripts/createStructure.js
+node scripts/createStructure.cjs
 
 # Set up Husky if directory exists
 if [ -d ".husky" ]; then
