@@ -18,7 +18,7 @@ const folderStructure = [
   'public',
 ];
 const content = {
-  'src/controllers/user.controller.ts':`import { Request,Response } from "express";
+  'src/controllers/user.controller.ts': `import { Request,Response } from "express";
 import { User } from "../models/users";
 
 const mockUser: User = {
@@ -30,12 +30,12 @@ const mockUser: User = {
   export const getUser = (req: Request, res: Response) => {
     res.json(mockUser);
   };`,
-  'src/models/users.ts':`export interface User{
+  'src/models/users.ts': `export interface User{
     id: string;
     name: string;
     email: string;
 }`,
- 'src/routes/user.routes.ts' :`import { Router } from 'express';
+  'src/routes/user.routes.ts': `import { Router } from 'express';
 import { getUser } from '../controllers/user.controller';
 
 const router = Router();
@@ -44,7 +44,7 @@ router.get('/user', getUser);
 
 export default router;
 `,
-'src/index.ts': `import express from 'express';
+  'src/index.ts': `import express from 'express';
 import userRoutes from './routes/user.routes';
 import dotenv from 'dotenv';
 
@@ -59,15 +59,15 @@ app.use('/api', userRoutes);
 app.listen(PORT, () => {
 console.log(\`Server is running on port \${PORT}\`);
 });
-`
-}
+`,
+};
 const scriptPath = path.resolve(__dirname, '../check-env.sh');
 function createFolders(basePath, folders) {
-  folders.forEach(folder => {
+  folders.forEach((folder) => {
     const dirPath = path.resolve(basePath, '..', folder);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
-      console.log(`Carpeta creada: ${dirPath}`)
+      console.log(`Carpeta creada: ${dirPath}`);
     }
   });
 }
@@ -88,8 +88,8 @@ function createExampleComponents(content) {
 createFolders(__dirname, folderStructure);
 createExampleComponents(content);
 const child = spawn('bash', [scriptPath], {
-  stdio: 'inherit', 
-  detached: true,  
+  stdio: 'inherit',
+  detached: true,
 });
 
 child.unref();

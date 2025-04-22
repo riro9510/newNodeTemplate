@@ -1,59 +1,84 @@
 #!/bin/bash
 
-echo "🚀 Initializing your Node.js Project Template..."
+echo "🚀 Starting Node.js project setup..."
 
-# Define colors
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-
-# Step 1 – Check for Node
+# Check if Node.js is installed
 if ! command -v node &> /dev/null; then
-  echo -e "${RED}❌ Node.js is not installed. Please install it and try again.${NC}"
+  echo "❌ Node.js is not installed. Please install it before continuing."
   exit 1
 fi
 
 # Optional: Check if NVM is installed (commented unless required)
 # if ! command -v nvm &> /dev/null; then
-#   echo -e "${RED}❌ NVM is not installed. Please install it (https://github.com/nvm-sh/nvm) and try again.${NC}"
+#   echo "❌ NVM is not installed. Please install it (https://github.com/nvm-sh/nvm) and try again."
 #   exit 1
 # fi
 
-# Step 2 – Use latest LTS (uncomment if using nvm)
+# Optional: Use latest LTS with NVM
 # echo "📦 Using latest LTS Node.js version..."
 # nvm install --lts
 # nvm use --lts
 
-# Step 3 – Install dependencies
-echo -e "${GREEN}📦 Installing dependencies...${NC}"
+# Make scripts and husky hooks executable
+echo "🔐 Ensuring scripts and hooks are executable..."
+chmod +x scripts/*.js 2>/dev/null
+chmod +x .husky/* 2>/dev/null
+
+# Install dependencies
+echo "📦 Installing dependencies..."
 npm install
 
-# Step 4 – Create .env if it doesn't exist
+# Create .env if not exists
 if [ ! -f .env ]; then
-  echo -e "${GREEN}🔐 Creating default .env file...${NC}"
-newValue=$(openssl rand -base64 32)
-# Create the .env file
-touch .env
-
-# Adding content
-echo "PORT=3000" > .env
-echo "DATABASE_URL=your_db_url_here" >> .env
-echo "JWT_SECRET=$newValue" >> .env
-
+  echo "🔐 Creating default .env file..."
+  newValue=$(openssl rand -base64 32)
+  touch .env
+  echo "PORT=3000" > .env
+  echo "DATABASE_URL=your_db_url_here" >> .env
+  echo "JWT_SECRET=$newValue" >> .env
 else
-  echo -e "${GREEN}✅ .env file already exists.${NC}"
+  echo "✅ .env file already exists."
 fi
 
-# Step 5 – Generate project structure
-echo -e "${GREEN}📁 Creating folder structure...${NC}"
-node ./scripts/createStructure.js
+# Create project structure
+echo "📂 Creating base structure..."
+node scripts/createStructure.js
 
-# Optional: Set up Husky (only if you want auto-setup)
+# Set up Husky if directory exists
 if [ -d ".husky" ]; then
-  echo -e "${GREEN}🔧 Setting up Git hooks with Husky...${NC}"
+  echo "🔧 Setting up Git hooks with Husky..."
   npx husky install
 else
-  echo -e "${RED}⚠️ Husky not detected. Run manually: npx husky install${NC}"
+  echo "⚠️ Husky not detected. Run manually: npx husky install"
 fi
 
-echo -e "${GREEN}🎉 Project initialized successfully!${NC}"
+# Detect user's shell and config file
+SHELL_NAME=$(basename "$SHELL")
+CONFIG_FILE=""
+
+case "$SHELL_NAME" in
+  bash) CONFIG_FILE="$HOME/.bashrc" ;;
+  zsh) CONFIG_FILE="$HOME/.zshrc" ;;
+  fish) CONFIG_FILE="$HOME/.config/fish/config.fish" ;;
+  *) CONFIG_FILE="$HOME/.bashrc"
+     echo "⚠️ Unknown shell: $SHELL_NAME. Defaulting to .bashrc" ;;
+esac
+
+# Add alias if not already present
+if ! grep -Fxq "alias tidy='node scripts/alias.js'" "$CONFIG_FILE"; then
+  echo "🔗 Adding alias to $CONFIG_FILE"
+  echo "alias tidy='node scripts/alias.js'" >> "$CONFIG_FILE"
+  source "$CONFIG_FILE"
+fi
+
+# Run lint and format
+echo "🧹 Running lint and format..."
+npm run lint:fix && npm run format
+
+# Done
+echo "✅ Node.js project successfully initialized 🎉"
+echo "📦 All dependencies installed"
+echo "🔧 ESLint, Prettier, Husky, and Commitizen configured"
+echo "🧪 .env file and folder structure ready"
+echo "✨ Tidy alias is now available – just type: tidy"
+echo "🌀 You may need to restart your terminal or run: source $CONFIG_FILE"
