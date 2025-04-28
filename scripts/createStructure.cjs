@@ -59,7 +59,7 @@ app.listen(PORT, () => {
 console.log(\`Server is running on port \${PORT}\`);
 });
 `,
-'tsconfig.json': `{
+  'tsconfig.json': `{
   "compilerOptions": {
     "target": "ESNext",
     "module": "NodeNext",
@@ -81,7 +81,7 @@ console.log(\`Server is running on port \${PORT}\`);
   "exclude": ["node_modules"]
 }
 `,
-'eslint.config.js': `
+  'eslint.config.js': `
 import js from '@eslint/js';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import tseslint from '@typescript-eslint/eslint-plugin';
@@ -153,7 +153,6 @@ coverage
   "trailingComma": "es5"
 }
 `,
-
 };
 const scriptPath = path.resolve(__dirname, '../check-env.sh');
 function createFolders(basePath, folders) {

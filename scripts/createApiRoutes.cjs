@@ -15,12 +15,12 @@ if (!rawInput) {
   console.error('❌ You must give at least one api name (ej: users o users,books,tasks)');
   process.exit(1);
 }
-const moduleNames = rawInput.split(',').map(name => name.trim().toLowerCase());
+const moduleNames = rawInput.split(',').map((name) => name.trim().toLowerCase());
 
 const folders = ['routes', 'controllers', 'services'];
 
 function createModuleFiles(moduleName) {
-  folders.forEach(folder => {
+  folders.forEach((folder) => {
     const folderPath = path.join(srcPath, folder);
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
