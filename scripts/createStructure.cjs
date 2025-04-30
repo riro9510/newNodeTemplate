@@ -159,6 +159,28 @@ coverage
   "trailingComma": "es5"
 }
 `,
+'src/middlewares/global.middlewares.ts': `
+import express, { Express } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+
+const loadMiddlewares = (app: Express) => {
+  app.use(helmet());
+  app.use(cors());
+
+  // Registrar logs solo en desarrollo o usar un formato más detallado en producción
+  if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+  } else if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('combined')); // útil para logs persistentes
+  }
+
+  app.use(express.json());
+};
+
+export default loadMiddlewares;
+`
 };
 const scriptPath = path.resolve(__dirname, '../check-env.sh');
 function createFolders(basePath, folders) {
