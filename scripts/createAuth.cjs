@@ -262,7 +262,7 @@ export const connectDB = async () => {
   }
 };
 
-`
+`;
 
 // Crear los archivos
 const files = [
@@ -279,7 +279,9 @@ const files = [
   },
   { path: 'middlewares/error.middleware.ts', content: errorMiddleware },
   {
-    path: 'config/database.ts', content:dataBase}
+    path: 'config/database.ts',
+    content: dataBase,
+  },
 ];
 
 files.forEach((file) => {

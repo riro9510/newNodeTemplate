@@ -10,8 +10,8 @@ if (fs.existsSync(indexRoutesPath)) {
 }
 
 // Crear el archivo index.routes.ts con el encabezado básico
-const importExpress = `import express from 'express';\n`;
-const appDeclaration = `const app = express();\n`;
+const importExpress = `import { Router } from 'express';\n`;
+const appDeclaration = `const router = Router();\n`;
 fs.writeFileSync(indexRoutesPath, importExpress + appDeclaration, 'utf8');
 console.log(`📂 Archivo creado: ${indexRoutesPath}`);
 
@@ -21,7 +21,7 @@ const routeImports = fs.readdirSync(routesDir).reduce(
     if (file.endsWith('route.ts')) {
       const routeName = file.split('.')[0];
       const importStatement = `import ${routeName} from './${file}';\n`;
-      const routeRegistration = `app.use('/${routeName.replace('Api', '').toLowerCase()}', ${routeName});\n`;
+      const routeRegistration = `router.use('/${routeName.replace('Api', '').toLowerCase()}', ${routeName});\n`;
 
       acc.imports.push(importStatement);
       acc.routes.push(routeRegistration);
