@@ -28,7 +28,7 @@ function createModuleFiles(moduleName) {
     }
 
     const singularFolder = folder.slice(0, -1);
-    const fileName = `${moduleName}.${singularFolder}.js`;
+    const fileName = `${moduleName}.${singularFolder}.ts`;
     const filePath = path.join(folderPath, fileName);
 
     if (fs.existsSync(filePath)) {
@@ -39,33 +39,39 @@ function createModuleFiles(moduleName) {
     let content = '';
 
     if (folder === 'routes') {
-      content = `const express = require('express');
-const router = express.Router();
-const ${moduleName}Controller = require('../controllers/${moduleName}.controller');
+      content = `
+        import express from 'express';
+        import ${moduleName}Controller from '../controllers/${moduleName}.controller.js';
+        import { isAuthenticated } from '@/middlewares/auth.middleware.ts';
+        import { errorHandler } from '../middlewares/error.middleware.ts';
+        const router = express.Router();
 
-// CREATE
-router.post('/', ${moduleName}Controller.create);
+        // CREATE
+        router.post('/', isAuthenticated(), ${moduleName}Controller.create);
 
-// READ ALL
-router.get('/', ${moduleName}Controller.getAll);
+        // READ ALL
+        router.get('/', isAuthenticated(), ${moduleName}Controller.getAll);
 
-// READ ONE
-router.get('/:id', ${moduleName}Controller.getById);
+        // READ ONE
+        router.get('/:id', isAuthenticated(), ${moduleName}Controller.getById);
 
-// UPDATE
-router.put('/:id', ${moduleName}Controller.update);
+        // UPDATE
+        router.put('/:id', isAuthenticated(), ${moduleName}Controller.update);
 
-// DELETE
-router.delete('/:id', ${moduleName}Controller.remove);
+        // DELETE
+        router.delete('/:id', isAuthenticated(), ${moduleName}Controller.remove);
 
-module.exports = router;
-`;
+        router.use(errorHandler)
+
+        export default router;
+        `;
     }
 
     if (folder === 'controllers') {
-      content = `const ${moduleName}Service = require('../services/${moduleName}.service');
+      content = `import ${moduleName}Service from '../services/${moduleName}.service';
+import { Request, Response, NextFunction } from 'express';
 
-exports.create = async (req, res, next) => {
+const create = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const result = await ${moduleName}Service.create(req.body);
     res.status(201).json(result);
@@ -74,7 +80,7 @@ exports.create = async (req, res, next) => {
   }
 };
 
-exports.getAll = async (req, res, next) => {
+const getAll = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const result = await ${moduleName}Service.getAll();
     res.json(result);
@@ -83,7 +89,7 @@ exports.getAll = async (req, res, next) => {
   }
 };
 
-exports.getById = async (req, res, next) => {
+const getById = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const result = await ${moduleName}Service.getById(req.params.id);
     res.json(result);
@@ -92,7 +98,7 @@ exports.getById = async (req, res, next) => {
   }
 };
 
-exports.update = async (req, res, next) => {
+const update = async (req:Request, res:Response, next:NextFunction) => {
   try {
     const result = await ${moduleName}Service.update(req.params.id, req.body);
     res.json(result);
@@ -101,14 +107,23 @@ exports.update = async (req, res, next) => {
   }
 };
 
-exports.remove = async (req, res, next) => {
+const remove = async (req:Request, res:Response, next:NextFunction) => {
   try {
-    const result = await ${moduleName}Service.remove(req.params.id);
+    await ${moduleName}Service.remove(req.params.id);
     res.json({ success: true });
   } catch (error) {
     next(error);
   }
 };
+
+export default {
+  create,
+  getAll,
+  getById,
+  update,
+  remove,
+};
+
 `;
     }
 

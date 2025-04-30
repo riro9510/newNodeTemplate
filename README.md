@@ -40,15 +40,14 @@ tests/
 
 public/
 
-
 ## 🚀 Getting Started
 
 **Clone the repository**
-   git clone https://github.com/yourUserName/newNodeTemplate.git
-   cd newNodeTemplate
-   npm install
-   chmod +x init.sh
-   ./init.sh
+git clone https://github.com/yourUserName/newNodeTemplate.git
+cd newNodeTemplate
+npm install
+chmod +x init.sh
+./init.sh
 
 ## 🧼 Lint & Format
 

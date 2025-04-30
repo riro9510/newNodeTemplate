@@ -34,7 +34,10 @@ if [ ! -f .env ]; then
   newValue=$(openssl rand -base64 32)
   touch .env
   echo "PORT=3000" > .env
-  echo "DATABASE_URL=your_db_url_here" >> .env
+  echo "NODE_ENV=development" >> .env
+  echo "DB_TYPE=mongo" >> .env
+  echo "MONGO_URL=mongodb://localhost:27017/theDatabase" >> .env
+  echo "POSTGRES_URL=postgres://usuario:contraseña@localhost:5432/theDataBase" >> .env
   echo "JWT_SECRET=$newValue" >> .env
 else
   echo "✅ .env file already exists."
