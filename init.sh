@@ -74,6 +74,7 @@ if ! grep -Fxq "alias tidy='node scripts/alias.js'" "$CONFIG_FILE"; then
   source "$CONFIG_FILE"
 fi
 
+bash scripts/setup_snippets.sh
 # Run lint and format
 echo "🧹 Running lint and format..."
 npm run lint:fix && npm run format

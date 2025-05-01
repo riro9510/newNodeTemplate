@@ -5,6 +5,10 @@ const basePath = path.resolve(__dirname, '..');
 
 const srcPath = path.join(basePath, 'src');
 
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 if (!fs.existsSync(srcPath)) {
   console.error('❌ Folder does not exist. please run ./init.sh');
   process.exit(1);
@@ -17,8 +21,9 @@ if (!rawInput) {
 }
 const moduleNames = rawInput.split(',').map((name) => name.trim().toLowerCase());
 
-const folders = ['routes', 'controllers', 'services'];
+const folders = ['routes', 'controllers', 'services', 'models', 'tests'];
 
+const dbType = process.argv.includes('--db=pg') ? 'pg' : 'mongo';
 function createModuleFiles(moduleName) {
   folders.forEach((folder) => {
     const folderPath = path.join(srcPath, folder);
@@ -164,6 +169,56 @@ exports.remove = async (id) => {
 };
 `;
     }
+    
+      if (folder === 'models') {
+        content = dbType === 'pg'
+          ? `import { DataTypes } from 'sequelize';
+    import sequelize from '@/db/sequelize';
+    
+    const ${capitalize(moduleName)} = sequelize.define('${capitalize(moduleName)}', {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      description: DataTypes.TEXT
+    }, {
+      timestamps: true
+    });
+    
+    export default ${capitalize(moduleName)};`
+          : `import mongoose from 'mongoose';
+    
+    const ${moduleName}Schema = new mongoose.Schema({
+      name: { type: String, required: true },
+      description: String,
+      createdAt: { type: Date, default: Date.now }
+    });
+    
+    const ${capitalize(moduleName)} = mongoose.model('${capitalize(moduleName)}', ${moduleName}Schema);
+    
+    export default ${capitalize(moduleName)};`;
+      }
+    
+      if (folder === 'tests') {
+        content = `import request from 'supertest';
+    import app from '@/app';
+    
+    describe('${capitalize(moduleName)} API', () => {
+      it('should return 200 on GET /api/${moduleName}', async () => {
+        const res = await request(app).get('/api/${moduleName}');
+        expect(res.statusCode).toBe(200);
+      });
+    
+      it('should create item on POST /api/${moduleName}', async () => {
+        const payload = { name: 'Sample ${moduleName}' };
+        const res = await request(app).post('/api/${moduleName}').send(payload);
+        expect(res.statusCode).toBe(201);
+        expect(res.body).toHaveProperty('id');
+      });
+    });
+    `;
+      }
+    
 
     fs.writeFileSync(filePath, content, 'utf8');
     console.log(`✅ Creado ${filePath}`);
