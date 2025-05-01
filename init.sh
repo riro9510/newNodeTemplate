@@ -23,6 +23,7 @@ fi
 echo "🔐 Ensuring scripts and hooks are executable..."
 chmod +x scripts/*.js 2>/dev/null
 chmod +x .husky/* 2>/dev/null
+chmod +x scripts/setup_snippets.sh
 
 # Install dependencies
 echo "📦 Installing dependencies..."
