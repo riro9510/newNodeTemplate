@@ -169,9 +169,10 @@ exports.remove = async (id) => {
 };
 `;
     }
-    
-      if (folder === 'models') {
-        content = dbType === 'pg'
+
+    if (folder === 'models') {
+      content =
+        dbType === 'pg'
           ? `import { DataTypes } from 'sequelize';
     import sequelize from '@/db/sequelize';
     
@@ -197,28 +198,27 @@ exports.remove = async (id) => {
     const ${capitalize(moduleName)} = mongoose.model('${capitalize(moduleName)}', ${moduleName}Schema);
     
     export default ${capitalize(moduleName)};`;
-      }
-    
-      if (folder === 'tests') {
-        content = `import request from 'supertest';
-    import app from '@/app';
+    }
+
+    if (folder === 'tests') {
+      content = `import request from 'supertest';
+    import app from '../index.ts';
     
     describe('${capitalize(moduleName)} API', () => {
-      it('should return 200 on GET /api/${moduleName}', async () => {
-        const res = await request(app).get('/api/${moduleName}');
+      it('should return 200 on GET /${moduleName}', async () => {
+        const res = await request(app).get('/${moduleName}');
         expect(res.statusCode).toBe(200);
       });
     
-      it('should create item on POST /api/${moduleName}', async () => {
+      it('should create item on POST /${moduleName}', async () => {
         const payload = { name: 'Sample ${moduleName}' };
-        const res = await request(app).post('/api/${moduleName}').send(payload);
+        const res = await request(app).post('/${moduleName}').send(payload);
         expect(res.statusCode).toBe(201);
         expect(res.body).toHaveProperty('id');
       });
     });
     `;
-      }
-    
+    }
 
     fs.writeFileSync(filePath, content, 'utf8');
     console.log(`✅ Creado ${filePath}`);
