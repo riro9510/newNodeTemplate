@@ -70,7 +70,7 @@ const middlewareContent = `
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { validUser } from '@/services/auth.service.js';
-import { User } from '@/models/users.ts';
+import { User } from '@/models/users.js';
 
 
 // Extendemos el Request para que typescript sepa que existirá req.user
@@ -139,7 +139,7 @@ import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { validUser } from '@/services/auth.service.js';
-import { User } from '@/models/users.ts';
+import { User } from '@/models/users.js';
 import bcrypt from 'bcrypt';
 
 
@@ -237,7 +237,10 @@ export const errorHandler = (
 `;
 const dataBase = `
   import mongoose from 'mongoose';
-import { Pool } from 'pg';
+import pg from 'pg'
+
+const { Pool } = pg
+
 
 export const connectDB = async () => {
   const dbType = process.env.DB_TYPE;

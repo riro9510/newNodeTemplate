@@ -47,8 +47,8 @@ function createModuleFiles(moduleName) {
       content = `
         import express from 'express';
         import ${moduleName}Controller from '../controllers/${moduleName}.controller.js';
-        import { isAuthenticated } from '@/middlewares/auth.middleware.ts';
-        import { errorHandler } from '../middlewares/error.middleware.ts';
+        import { isAuthenticated } from '@/middlewares/auth.middleware.js';
+        import { errorHandler } from '../middlewares/error.middleware.js';
         const router = express.Router();
 
         // CREATE
@@ -73,7 +73,7 @@ function createModuleFiles(moduleName) {
     }
 
     if (folder === 'controllers') {
-      content = `import ${moduleName}Service from '../services/${moduleName}.service';
+      content = `import ${moduleName}Service from '../services/${moduleName}.service.js';
 import { Request, Response, NextFunction } from 'express';
 
 const create = async (req:Request, res:Response, next:NextFunction) => {
@@ -133,40 +133,44 @@ export default {
     }
 
     if (folder === 'services') {
-      content = `// Simulaciones de base de datos
-const db = [];
+      content = `import mongoose from 'mongoose';
+import ${capitalize(moduleName)} from '@/models/${capitalize(moduleName)}.model.js';
 
-exports.create = async (data) => {
-  const newItem = { id: db.length + 1, ...data };
-  db.push(newItem);
-  return newItem;
+const create = async (data) => {
+  const register = await ${capitalize(moduleName)}.create({ data });
+  return register;
 };
 
-exports.getAll = async () => {
-  return db;
+const getAll = async () => {
+  return await ${capitalize(moduleName)}.find();
 };
 
-exports.getById = async (id) => {
-  return db.find(item => item.id === parseInt(id));
-};
-
-exports.update = async (id, data) => {
-  const index = db.findIndex(item => item.id === parseInt(id));
-  if (index !== -1) {
-    db[index] = { ...db[index], ...data };
-    return db[index];
+const getById = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error('ID inválido');
   }
-  return null;
+  return await ${capitalize(moduleName)}.findById(id);
 };
 
-exports.remove = async (id) => {
-  const index = db.findIndex(item => item.id === parseInt(id));
-  if (index !== -1) {
-    db.splice(index, 1);
-    return true;
+const update = async (id, data) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error('ID inválido');
   }
-  return false;
+  return await ${capitalize(moduleName)}.updateOne({ _id: id }, { $set: data });
 };
+
+const remove = async (id) => {
+  return await ${capitalize(moduleName)}.deleteOne({ _id: id });
+};
+
+export default {
+  create,
+  getAll,
+  getById,
+  update,
+  remove
+};
+
 `;
     }
 
@@ -202,7 +206,7 @@ exports.remove = async (id) => {
 
     if (folder === 'tests') {
       content = `import request from 'supertest';
-    import app from '../index.ts';
+    import app from '../index.js';
     
     describe('${capitalize(moduleName)} API', () => {
       it('should return 200 on GET /${moduleName}', async () => {

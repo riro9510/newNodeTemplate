@@ -19,7 +19,7 @@ const folderStructure = [
 ];
 const content = {
   'src/controllers/user.controller.ts': `import { Request,Response } from "express";
-import { User } from "../models/users.ts";
+import { User } from "../models/users.js";
 
 const mockUser: User = {
     id: '1',
@@ -42,7 +42,7 @@ const mockUser: User = {
 }
 `,
   'src/routes/user.routes.ts': `import { Router } from 'express';
-import { getUser } from '../controllers/user.controller.ts';
+import { getUser } from '../controllers/user.controller.js';
 
 const router = Router();
 
@@ -51,7 +51,7 @@ router.get('/user', getUser);
 export default router;
 `,
   'src/index.ts': `import express from 'express';
-import userRoutes from './routes/user.routes.ts';
+import userRoutes from './routes/user.routes.js';
 import 'dotenv/config';
 
 
