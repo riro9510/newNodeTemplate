@@ -5,11 +5,11 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec npm start",
+    "dev": "node --loader ts-node/esm --no-warnings --experimental-specifier-resolution=node src/index.ts",
     "build": "tsc",
     "prepare": "husky install",
     "prod": "node dist/index.js",
-    "start": "NODE_ENV=development tsx src/index.ts",
+    "start": "node -r module-alias/register dist/index.js",
     "lint:src": "eslint 'src/**/*.{ts,tsx}'",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write ."
@@ -36,6 +36,7 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mongoose": "^8.13.2",
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
@@ -86,5 +87,9 @@
     "commitizen": {
       "path": "./.husky/commit-assistant.cjs"
     }
-  }
+  },
+  "_moduleAliases": {
+  "@": "dist"
+}
+
 }

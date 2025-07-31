@@ -53,6 +53,7 @@ export default router;
   'src/index.ts': `import express from 'express';
 import userRoutes from './routes/user.routes.js';
 import 'dotenv/config';
+import 'module-alias/register';
 
 
 const app = express();
@@ -68,26 +69,24 @@ console.log(\`Server is running on port \${PORT}\`);
 export default app;
 `,
   'tsconfig.json': `{
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2020",
     "module": "NodeNext",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "types": ["node"],
+    "allowJs": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.js"],
   "exclude": ["node_modules"]
 }
+
 `,
   'eslint.config.js': `
 import js from '@eslint/js';
@@ -182,6 +181,16 @@ const loadMiddlewares = (app: Express) => {
 
 export default loadMiddlewares;
 `,
+'tsconfig.paths.json': `
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  }
+}
+`
 };
 const scriptPath = path.resolve(__dirname, '../check-env.sh');
 function createFolders(basePath, folders) {
