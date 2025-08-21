@@ -47,7 +47,7 @@ function createModuleFiles(moduleName) {
       content = `
         import express from 'express';
         import ${moduleName}Controller from '../controllers/${moduleName}.controller.js';
-        import { isAuthenticated } from '@/middlewares/auth.middleware.js';
+        import { isAuthenticated } from '../middlewares/auth.middleware.js';
         import { errorHandler } from '../middlewares/error.middleware.js';
         const router = express.Router();
 
@@ -134,7 +134,7 @@ export default {
 
     if (folder === 'services') {
       content = `import mongoose from 'mongoose';
-import ${capitalize(moduleName)} from '@/models/${capitalize(moduleName)}.model.js';
+import ${capitalize(moduleName)} from '../models/${capitalize(moduleName)}.model.js';
 
 const create = async (data) => {
   const register = await ${capitalize(moduleName)}.create({ data });

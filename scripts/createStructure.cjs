@@ -53,17 +53,46 @@ export default router;
   'src/index.ts': `import express from 'express';
 import userRoutes from './routes/user.routes.js';
 import 'dotenv/config';
-import 'module-alias/register';
+import { connectDB } from './config/database.js';
+import cors from 'cors';
+import { WebSocketServer } from 'ws';
+import https from 'http';
 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 10000;
 
 app.use(express.json());
 app.use('/api', userRoutes);
 
-app.listen(PORT, () => {
-console.log(\`Server is running on port \${PORT}\`);
+const allowedOrigins = [
+  'http://localhost:3000'
+];
+
+connectDB();
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true, 
+  })
+);
+
+app.use(express.json());
+app.use('/api', router);
+
+const server = https.createServer(app);
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(\`Servidor HTTP/WebSocket escuchando en puerto \${PORT}\`);
+  console.log(\`Temp files directory: \${PUBLIC_DIR}\`);
 });
 
 export default app;
@@ -84,7 +113,7 @@ export default app;
     "allowJs": true
   },
   "include": ["src/**/*.ts", "src/**/*.js"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/tests]
 }
 
 `,

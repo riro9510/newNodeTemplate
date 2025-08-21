@@ -5,10 +5,10 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --loader ts-node/esm --no-warnings --experimental-specifier-resolution=node src/index.ts",
+    "dev": "nodemon --exec tsx src/index.ts",
     "build": "tsc",
-    "prepare": "husky install",
     "prod": "node dist/index.js",
+    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install; fi",
     "start": "node -r module-alias/register dist/index.js",
     "lint:src": "eslint 'src/**/*.{ts,tsx}'",
     "lint:fix": "eslint . --ext .ts --fix",
@@ -25,6 +25,12 @@
   },
   "homepage": "https://github.com/riro9510/newNodeTemplate#readme",
   "dependencies": {
+    "@types/archiver": "^6.0.3",
+    "@types/pdfkit": "^0.17.2",
+    "@types/pg": "^8.15.5",
+    "@types/ws": "^8.18.1",
+    "archiver": "^7.0.1",
+    "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
@@ -44,18 +50,19 @@
     "passport-local": "^1.0.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/helmet": "^0.0.48",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/morgan": "^1.9.9",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^22.14.1",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
@@ -89,7 +96,6 @@
     }
   },
   "_moduleAliases": {
-  "@": "dist"
-}
-
+    "@": "dist"
+  }
 }

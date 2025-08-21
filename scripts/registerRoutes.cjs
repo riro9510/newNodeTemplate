@@ -20,7 +20,7 @@ const routeImports = fs.readdirSync(routesDir).reduce(
   (acc, file) => {
     if (file.endsWith('route.ts')) {
       const routeName = file.split('.')[0];
-      const importStatement = `import ${routeName} from './${file}';\n`;
+      const importStatement = `import ${routeName} from './${file}.js';\n`;
       const routeRegistration = `router.use('/${routeName.replace('Api', '').toLowerCase()}', ${routeName});\n`;
 
       acc.imports.push(importStatement);
@@ -36,5 +36,6 @@ routeImports.routes.forEach((route) => {
   fs.appendFileSync(indexRoutesPath, route, 'utf8');
   console.log(`✅ Ruta registrada: ${route}`);
 });
+fs.appendFileSync(indexRoutesPath, 'export default router;\n', 'utf8');
 
 console.log(`📝 Rutas registradas correctamente en ${indexRoutesPath}`);
